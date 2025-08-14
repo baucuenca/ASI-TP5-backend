@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 
-from ..models.book import Book
+from ..models.book import Book, BookCreate
 from ..config.db import session_dep
 
 # Rutas
@@ -24,8 +24,9 @@ def read_book(book_id: int, session: session_dep):
     return book
 
 @book.post("/books")
-def create_book(book: Book, session: session_dep):
-    session.add(book)
+def create_book(book: BookCreate, session: session_dep):
+    db_book = Book.model_validate(book)
+    session.add(db_book)
     session.commit()
-    session.refresh(book)
-    return book
+    session.refresh(db_book)
+    return db_book
