@@ -13,6 +13,8 @@ py -m venv .venv
 
 pip instal -r requirements.txt
 
-### 3) Levantar la BD de MySQL en un contenedor Docker.
+### 3) Levantar la BD de MySQL en un contenedor Docker y acceder a su terminal.
 
 docker compose up -d
+docker exec -it asi-tp5-backend-mysql-1 bash
+mysql -p
