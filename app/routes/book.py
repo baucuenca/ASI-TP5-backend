@@ -46,3 +46,13 @@ def update_book(book_id: int, book: BookUpdate, session: session_dep):
     session.commit()
     session.refresh(db_book)
     return db_book
+
+# Eliminar un libro
+@book.delete("/books/{book_id}")
+def delete_book(book_id: int, session: session_dep):
+    db_book = session.get(Book, book_id)
+    if not db_book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    session.delete(db_book)
+    session.commit()
+    return {"book_deleted": True}
