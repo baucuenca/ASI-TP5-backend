@@ -6,15 +6,15 @@ TP 5 (backend) - Administración de Sistemas de Información - UTN (FRLP)
 
 ### 1) Crear y activar un entorno virtual (venv).
 
-py -m venv .venv
-.venv\Scripts\activate
+- py -m venv .venv
+- .venv\Scripts\activate
 
 ### 2) Instalar las dependencias dentro del entorno virtual.
 
-pip instal -r requirements.txt
+- pip instal -r requirements.txt
 
 ### 3) Levantar la BD de MySQL en un contenedor Docker y acceder a su terminal.
 
-docker compose up -d
-docker exec -it asi-tp5-backend-mysql-1 bash
-mysql -p
+- docker compose up -d
+- docker exec -it asi-tp5-backend-mysql-1 bash
+- mysql -p
