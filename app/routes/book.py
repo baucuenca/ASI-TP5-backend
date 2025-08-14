@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 
-from ..models.book import Book, BookCreate
+from ..models.book import Book, BookCreate, BookUpdate
 from ..config.db import session_dep
 
 # Rutas
@@ -29,6 +29,19 @@ def read_book(book_id: int, session: session_dep):
 @book.post("/books")
 def create_book(book: BookCreate, session: session_dep):
     db_book = Book.model_validate(book) # Validar y crear instancia de Book lista para insertar en la BD
+    session.add(db_book)
+    session.commit()
+    session.refresh(db_book)
+    return db_book
+
+# Actualizar un libro existente
+@book.patch("/books/{book_id}")
+def update_book(book_id: int, book: BookUpdate, session: session_dep):
+    db_book = session.get(Book, book_id)
+    if not db_book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    book_data = book.model_dump(exclude_unset=True)  # Excluir campos no enviados
+    db_book.sqlmodel_update(book_data)  # Actualizar los campos del libro
     session.add(db_book)
     session.commit()
     session.refresh(db_book)
