@@ -9,17 +9,20 @@ from typing import Annotated
 # Cargar variables de entorno
 load_dotenv()
 
+MYSQL_HOST = os.getenv("MYSQL_HOST")
 MYSQL_ROOT_PASSWORD = os.getenv("MYSQL_ROOT_PASSWORD")
 MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 MYSQL_USER = os.getenv("MYSQL_USER")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 MYSQL_PORT = os.getenv("MYSQL_PORT")
 
-# URL de conexion
-database_url = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@localhost:{MYSQL_PORT}/{MYSQL_DATABASE}"
+
+# URL de conexion a la BD
+database_url = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
 engine = create_engine(database_url)
 
-server_url = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@localhost:{MYSQL_PORT}/"
+# URL de conexion al servidor
+server_url = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/"
 server_engine = create_engine(server_url)
 
 # Crear la BD si no existe
