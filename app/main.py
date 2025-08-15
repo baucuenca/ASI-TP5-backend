@@ -12,4 +12,4 @@ app.include_router(book)
 @app.on_event("startup")
 def startup_event():
     create_database() # Crea la base de datos si no existe
-    # create_tables() # Crea las tablas en la base de datos
+    # create_tables() # Crea las tablas en la base de datos. No es necesario si se utilizan migraciones para actualizar la BD
