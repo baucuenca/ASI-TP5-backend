@@ -1,6 +1,6 @@
 # Endpoints para el modelo Libro
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from sqlmodel import select
 
 from ..models.book import Book, BookCreate, BookUpdate
@@ -10,7 +10,7 @@ from ..config.db import session_dep
 book = APIRouter()
 
 # Obtener todos los libros
-@book.get("/books")
+@book.get("/books", response_model=list[Book])
 def read_books(session: session_dep):
     books = session.exec(select(Book)).all()
     if not books:
@@ -18,15 +18,15 @@ def read_books(session: session_dep):
     return books
 
 # Obtener un libro por ID
-@book.get("/books/{book_id}")
+@book.get("/books/{book_id}", response_model=Book)
 def read_book(book_id: int, session: session_dep):
-    book = session.get(Book, book_id)
-    if not book:
+    db_book = session.get(Book, book_id)
+    if not db_book:
         raise HTTPException(status_code=404, detail="Book not found")
-    return book
+    return db_book
 
 # Crear un nuevo libro
-@book.post("/books")
+@book.post("/books", response_model=Book)
 def create_book(book: BookCreate, session: session_dep):
     db_book = Book.model_validate(book) # Validar y crear instancia de Book lista para insertar en la BD
     session.add(db_book)
@@ -35,7 +35,7 @@ def create_book(book: BookCreate, session: session_dep):
     return db_book
 
 # Actualizar un libro existente
-@book.patch("/books/{book_id}")
+@book.patch("/books/{book_id}", response_model=Book)
 def update_book(book_id: int, book: BookUpdate, session: session_dep):
     db_book = session.get(Book, book_id)
     if not db_book:
@@ -48,11 +48,11 @@ def update_book(book_id: int, book: BookUpdate, session: session_dep):
     return db_book
 
 # Eliminar un libro
-@book.delete("/books/{book_id}")
+@book.delete("/books/{book_id}", status_code=204)
 def delete_book(book_id: int, session: session_dep):
     db_book = session.get(Book, book_id)
     if not db_book:
         raise HTTPException(status_code=404, detail="Book not found")
     session.delete(db_book)
     session.commit()
-    return {"book_deleted": True}
+    return Response(status_code=204) # Respuesta exitosa sin contenido
