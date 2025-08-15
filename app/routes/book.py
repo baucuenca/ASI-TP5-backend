@@ -10,7 +10,7 @@ from ..config.db import session_dep
 book = APIRouter()
 
 # Obtener todos los libros
-@book.get("/books", response_model=list[Book])
+@book.get("/books", response_model=list[Book], tags=["Books"])
 def read_books(session: session_dep):
     books = session.exec(select(Book)).all()
     if not books:
@@ -18,7 +18,7 @@ def read_books(session: session_dep):
     return books
 
 # Obtener un libro por ID
-@book.get("/books/{book_id}", response_model=Book)
+@book.get("/books/{book_id}", response_model=Book, tags=["Books"])
 def read_book(book_id: int, session: session_dep):
     db_book = session.get(Book, book_id)
     if not db_book:
@@ -26,7 +26,7 @@ def read_book(book_id: int, session: session_dep):
     return db_book
 
 # Crear un nuevo libro
-@book.post("/books", response_model=Book)
+@book.post("/books", response_model=Book, tags=["Books"])
 def create_book(book: BookCreate, session: session_dep):
     db_book = Book.model_validate(book) # Validar y crear instancia de Book lista para insertar en la BD
     session.add(db_book)
@@ -35,7 +35,7 @@ def create_book(book: BookCreate, session: session_dep):
     return db_book
 
 # Actualizar un libro existente
-@book.patch("/books/{book_id}", response_model=Book)
+@book.patch("/books/{book_id}", response_model=Book, tags=["Books"])
 def update_book(book_id: int, book: BookUpdate, session: session_dep):
     db_book = session.get(Book, book_id)
     if not db_book:
@@ -48,7 +48,7 @@ def update_book(book_id: int, book: BookUpdate, session: session_dep):
     return db_book
 
 # Eliminar un libro
-@book.delete("/books/{book_id}", status_code=204)
+@book.delete("/books/{book_id}", status_code=204, tags=["Books"])
 def delete_book(book_id: int, session: session_dep):
     db_book = session.get(Book, book_id)
     if not db_book:
