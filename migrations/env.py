@@ -8,6 +8,7 @@ from alembic import context
 from sqlmodel import SQLModel
 from app.config.db import database_url
 from app.models.book import Book
+from app.models.member import Member
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
