@@ -3,11 +3,13 @@
 from fastapi import FastAPI
 
 from .routes.book import book
+from .routes.member import member
 from .config.db import create_tables, create_database
 
 app = FastAPI()
 
 app.include_router(book)
+app.include_router(member)
 
 @app.on_event("startup")
 def startup_event():
