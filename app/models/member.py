@@ -10,7 +10,7 @@ class Member(SQLModel, table=True):
     last_name: str = Field(max_length=50)
     email: str = Field(max_length=100)
     phone: str = Field(max_length=15) 
-    joined_date: datetime = Field(default=datetime.now())
+    joined_date: datetime = Field(default=datetime.now()) # Fecha de creacion
 
 # Clase para la creación de un nuevo miembro
 class MemberCreate(SQLModel):
