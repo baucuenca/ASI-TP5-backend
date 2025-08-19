@@ -4,6 +4,8 @@ from fastapi import APIRouter, HTTPException, Response
 from sqlmodel import select
 
 from ..models.loan import Loan, LoanCreate, LoanUpdate
+from ..models.book import Book
+from ..models.member import Member
 from ..config.db import session_dep
 
 # Rutas
@@ -28,6 +30,13 @@ def get_loan(loan_id: int, session: session_dep):
 # Crear un nuevo prestamo
 @loan.post("/loans", response_model=Loan, tags=["Loans"])
 def create_loan(loan: LoanCreate, session: session_dep):
+    # Verificar la existencia del libro y el miembro
+    db_book = session.get(Book, loan.book_id)
+    db_member = session.get(Member, loan.member_id)
+    if not db_book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    if not db_member:
+        raise HTTPException(status_code=404, detail="Member not found")
     db_loan = Loan.model_validate(loan)
     session.add(db_loan)
     session.commit()
