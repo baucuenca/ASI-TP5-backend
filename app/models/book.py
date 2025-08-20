@@ -10,6 +10,8 @@ class Book(SQLModel, table=True):
     author: str = Field(max_length=50)
     published_year: int = Field(default=datetime.now().year)
     isbn: str = Field(max_length=13)
+    stock: int = Field(default=0)  # Cantidad de ejemplares disponibles
+    is_active: bool = Field(default=True)  # Estado del libro: activo o inactivo
 
 # Clase para la creación de un nuevo libro
 class BookCreate(SQLModel):
@@ -17,6 +19,7 @@ class BookCreate(SQLModel):
     author: str = Field(max_length=50)
     published_year: int = Field(default=datetime.now().year)
     isbn: str = Field(max_length=13)
+    stock: int = Field(default=0)
 
 # Clase para la actualización de un libro existente
 class BookUpdate(SQLModel):
@@ -24,3 +27,4 @@ class BookUpdate(SQLModel):
     author: str | None = Field(default=None, max_length=50)
     published_year: int | None = Field(default=None)
     isbn: str | None = Field(default=None, max_length=13)
+    stock: int | None = Field(default=None)

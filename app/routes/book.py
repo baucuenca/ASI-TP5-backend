@@ -13,7 +13,7 @@ book = APIRouter()
 # Obtener todos los libros
 @book.get("/books", response_model=list[Book], tags=["Books"])
 def read_books(session: session_dep):
-    db_books = session.exec(select(Book)).all()
+    db_books = session.exec(select(Book).where(Book.is_active == True)).all()
     if not db_books:
         raise HTTPException(status_code=404, detail="No books found")
     return db_books
@@ -52,14 +52,25 @@ def update_book(book_id: int, book: BookUpdate, session: session_dep):
 @book.delete("/books/{book_id}", status_code=204, tags=["Books"])
 def delete_book(book_id: int, session: session_dep):
     db_book = session.get(Book, book_id)
-    if not db_book:
+
+    # Verificar que el libro existe y está activo
+    if not db_book or not db_book.is_active:
         raise HTTPException(status_code=404, detail="Book not found")
-    
+
+    # Si no tiene ningun prestamo (abierto o cerrado) asociado, se elimina definitivamente (hard-delete)
+    has_a_loan = session.exec(select(Loan).where(Loan.book_id == book_id)).first()
+    if not has_a_loan:
+        session.delete(db_book)
+        session.commit()
+        return Response(status_code=204)
+
     # Verificar que el libro no tiene un prestamo activo
     active_loan = session.exec(select(Loan).where(Loan.book_id == book_id, Loan.returned == False)).first()
     if active_loan:
-        raise HTTPException(status_code=409, detail="Book is currently on loan") # Conflicto
+        raise HTTPException(status_code=409, detail="Book is currently on loan")
 
-    session.delete(db_book)
+    # Si tiene prestamos pero estan todos cerrados, se deja en inactivo para no perder la trazabilidad de los prestamos (soft-delete)
+    db_book.is_active = False
+    session.add(db_book)
     session.commit()
-    return Response(status_code=204) # Respuesta exitosa sin contenido
+    return Response(status_code=204)
