@@ -23,3 +23,4 @@ TP 5 (backend) - Administración de Sistemas de Información - UTN (FRLP)
 
 - alembic revision --autogenerate -m "Mensaje de la migracion"
 - alembic upgrade head
+- alembic downgrade -1 # Para deshacer la ultima migracion
