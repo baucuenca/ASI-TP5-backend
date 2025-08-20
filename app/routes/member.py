@@ -39,7 +39,7 @@ def create_member(member: MemberCreate, session: session_dep):
 @member.patch("/members/{member_id}", response_model=Member, tags=["Members"])
 def update_member(member_id: int, member: MemberUpdate, session: session_dep):
     db_member = session.get(Member, member_id)
-    if not db_member:
+    if not db_member or not db_member.is_active:
         raise HTTPException(status_code=404, detail="Member not found")
     member_data = member.model_dump(exclude_unset=True)  # Excluir campos no enviados
     db_member.sqlmodel_update(member_data)  # Actualizar los campos del miembro
