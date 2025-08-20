@@ -13,7 +13,7 @@ book = APIRouter()
 # Obtener todos los libros
 @book.get("/books", response_model=list[Book], tags=["Books"])
 def read_books(session: session_dep):
-    db_books = session.exec(select(Book).where(Book.is_active == True)).all()
+    db_books = session.exec(select(Book).where(Book.is_active)).all()
     if not db_books:
         raise HTTPException(status_code=404, detail="No books found")
     return db_books
