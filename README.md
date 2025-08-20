@@ -19,8 +19,13 @@ TP 5 (backend) - Administración de Sistemas de Información - UTN (FRLP)
 - docker exec -it asi-tp5-backend-mysql-1 bash
 - mysql -p
 
-## Para actualizar los modelos de datos en la BD (migraciones/migrations):
+## Migraciones
+
+### 1) Para actualizar los modelos de datos en la BD (migraciones/migrations):
 
 - alembic revision --autogenerate -m "Mensaje de la migracion"
 - alembic upgrade head
-- alembic downgrade -1 # Para deshacer la ultima migracion
+
+### 2) Para deshacer la ultima migracion
+
+- alembic downgrade -1
