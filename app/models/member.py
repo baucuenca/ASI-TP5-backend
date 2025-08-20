@@ -11,6 +11,7 @@ class Member(SQLModel, table=True):
     email: str = Field(max_length=100)
     phone: str = Field(max_length=15) 
     joined_date: datetime = Field(default=datetime.now()) # Fecha de creacion
+    is_active: bool = Field(default=True)  # Estado del miembro: activo o inactivo
 
 # Clase para la creación de un nuevo miembro
 class MemberCreate(SQLModel):

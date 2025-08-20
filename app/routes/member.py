@@ -13,7 +13,7 @@ member = APIRouter()
 # Obtener todos los miembros
 @member.get("/members", response_model=list[Member], tags=["Members"])
 def get_members(session: session_dep):
-    db_members = session.exec(select(Member)).all()
+    db_members = session.exec(select(Member).where(Member.is_active)).all()
     if not db_members:
         raise HTTPException(status_code=404, detail="No members found")
     return db_members
@@ -22,7 +22,7 @@ def get_members(session: session_dep):
 @member.get("/members/{member_id}", response_model=Member, tags=["Members"])
 def get_member(member_id: int, session: session_dep):
     db_member = session.get(Member, member_id)
-    if not db_member:
+    if not db_member and not db_member.is_active:
         raise HTTPException(status_code=404, detail="Member not found")
     return db_member
 
@@ -52,14 +52,26 @@ def update_member(member_id: int, member: MemberUpdate, session: session_dep):
 @member.delete("/members/{member_id}", response_model=Member, tags=["Members"])
 def delete_member(member_id: int, session: session_dep):
     db_member = session.get(Member, member_id)
-    if not db_member:
+
+    # Verificar que el miembro existe y está activo
+    if not db_member or not db_member.is_active:
         raise HTTPException(status_code=404, detail="Member not found")
     
+    # Si no tiene ningun prestamo (abierto o cerrado) asociado, se elimina definitivamente (hard-delete)
+    has_a_loan = session.exec(select(Loan).where(Loan.member_id == member_id)).first()
+    if not has_a_loan:
+        session.delete(db_member)
+        session.commit()
+        return Response(status_code=204)  # Respuesta exitosa sin contenido
+
     # Verificar que el miembro no tiene un prestamo activo
     active_loan = session.exec(select(Loan).where(Loan.member_id == member_id, Loan.returned == False)).first()
     if active_loan:
         raise HTTPException(status_code=409, detail="Member has an active loan") # Conflicto
 
-    session.delete(db_member)
+    # Si tiene prestamos pero estan todos cerrados, se deja en inactivo para no perder la trazabilidad de los prestamos (soft-delete)
+    db_member.is_active = False
+    session.add(db_member)
     session.commit()
+
     return Response(status_code=204)  # Respuesta exitosa sin contenido
