@@ -33,10 +33,17 @@ def create_loan(loan: LoanCreate, session: session_dep):
     # Verificar la existencia del libro y el miembro
     db_book = session.get(Book, loan.book_id)
     db_member = session.get(Member, loan.member_id)
+
     if not db_book:
         raise HTTPException(status_code=404, detail="Book not found")
+    
+    loans_count = len(session.exec(select(Loan).where(Loan.book_id == loan.book_id)).all())
+    if loans_count >= db_book.stock:
+        raise HTTPException(status_code=409, detail="No more copies available for loan")
+    
     if not db_member:
         raise HTTPException(status_code=404, detail="Member not found")
+    
     db_loan = Loan.model_validate(loan)
     session.add(db_loan)
     session.commit()
