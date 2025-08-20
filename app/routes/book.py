@@ -22,7 +22,7 @@ def read_books(session: session_dep):
 @book.get("/books/{book_id}", response_model=Book, tags=["Books"])
 def read_book(book_id: int, session: session_dep):
     db_book = session.get(Book, book_id)
-    if not db_book:
+    if not db_book or not db_book.is_active:
         raise HTTPException(status_code=404, detail="Book not found")
     return db_book
 
@@ -39,7 +39,7 @@ def create_book(book: BookCreate, session: session_dep):
 @book.patch("/books/{book_id}", response_model=Book, tags=["Books"])
 def update_book(book_id: int, book: BookUpdate, session: session_dep):
     db_book = session.get(Book, book_id)
-    if not db_book:
+    if not db_book or not db_book.is_active:
         raise HTTPException(status_code=404, detail="Book not found")
     book_data = book.model_dump(exclude_unset=True)  # Excluir campos no enviados
     db_book.sqlmodel_update(book_data)  # Actualizar los campos del libro
