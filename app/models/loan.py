@@ -10,6 +10,7 @@ class Loan(SQLModel, table=True):
     member_id: int = Field(foreign_key="member.id") # Clave foranea que asocia un miembro (Member)
     loan_date: datetime = Field(default=datetime.now())
     return_date: datetime | None = Field(default=None)
+    returned: bool = Field(default=False)
 
 # Clase para crear un nuevo prestamo
 class LoanCreate(SQLModel):
@@ -23,3 +24,4 @@ class LoanUpdate(SQLModel):
     member_id: int | None = Field(default=None, foreign_key="member.id")
     loan_date: datetime | None = Field(default=None)
     return_date: datetime | None = Field(default=None)
+    returned: bool | None = Field(default=None)
