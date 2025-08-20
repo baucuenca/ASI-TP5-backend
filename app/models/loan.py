@@ -25,3 +25,11 @@ class LoanUpdate(SQLModel):
     loan_date: datetime | None = Field(default=None)
     return_date: datetime | None = Field(default=None)
     returned: bool | None = Field(default=None)
+
+# Clase para ver un prestamo
+class LoanRead(SQLModel):
+    book_title: str
+    member_email: str
+    loan_date: datetime
+    return_date: datetime | None
+    returned: bool

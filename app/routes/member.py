@@ -49,7 +49,7 @@ def update_member(member_id: int, member: MemberUpdate, session: session_dep):
     return db_member
 
 # Eliminar un miembro existente
-@member.delete("/members/{member_id}", response_model=Member, tags=["Members"])
+@member.delete("/members/{member_id}", status_code=204, tags=["Members"])
 def delete_member(member_id: int, session: session_dep):
     db_member = session.get(Member, member_id)
 
