@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Response
 from sqlmodel import select
 
 from ..models.book import Book, BookCreate, BookUpdate
+from ..models.loan import Loan
 from ..config.db import session_dep
 
 # Rutas
@@ -53,6 +54,12 @@ def delete_book(book_id: int, session: session_dep):
     db_book = session.get(Book, book_id)
     if not db_book:
         raise HTTPException(status_code=404, detail="Book not found")
+    
+    # Verificar que el libro no tiene un prestamo activo
+    active_loan = session.exec(select(Loan).where(Loan.book_id == book_id, Loan.returned == False)).first()
+    if active_loan:
+        raise HTTPException(status_code=409, detail="Book is currently on loan") # Conflicto
+
     session.delete(db_book)
     session.commit()
     return Response(status_code=204) # Respuesta exitosa sin contenido
