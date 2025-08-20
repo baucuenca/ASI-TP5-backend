@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Response
 from sqlmodel import select
 
 from ..models.member import Member, MemberCreate, MemberUpdate
+from ..models.loan import Loan
 from ..config.db import session_dep
 
 # Rutas
@@ -53,6 +54,12 @@ def delete_member(member_id: int, session: session_dep):
     db_member = session.get(Member, member_id)
     if not db_member:
         raise HTTPException(status_code=404, detail="Member not found")
+    
+    # Verificar que el miembro no tiene un prestamo activo
+    active_loan = session.exec(select(Loan).where(Loan.member_id == member_id, Loan.returned == False)).first()
+    if active_loan:
+        raise HTTPException(status_code=409, detail="Member has an active loan") # Conflicto
+
     session.delete(db_member)
     session.commit()
     return Response(status_code=204)  # Respuesta exitosa sin contenido
