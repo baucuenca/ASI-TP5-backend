@@ -13,9 +13,13 @@ TP 5 (backend) - Administración de Sistemas de Información - UTN (FRLP)
 
 - pip instal -r requirements.txt
 
-### 3) Levantar la BD de MySQL en un contenedor Docker y acceder a su terminal.
+### 3) Levantar la BD de MySQL en un contenedor Docker y ejecutar el proyecto.
 
 - docker compose up -d
+- fastapi dev app/main.py
+
+### 3) Acceder a la BD desde la CLI.
+
 - docker exec -it asi-tp5-backend-mysql-1 bash
 - mysql -p
 
