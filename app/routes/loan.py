@@ -16,6 +16,7 @@ def parse_to_loan_read(loan: Loan, session: session_dep):
     book = session.get(Book, loan.book_id)
     member = session.get(Member, loan.member_id)
     return LoanRead(
+        id=loan.id,
         book_title=book.title,
         member_email=member.email,
         loan_date=loan.loan_date,

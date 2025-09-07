@@ -28,6 +28,7 @@ class LoanUpdate(SQLModel):
 
 # Clase para ver un prestamo
 class LoanRead(SQLModel):
+    id: int
     book_title: str
     member_email: str
     loan_date: datetime
