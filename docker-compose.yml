@@ -27,7 +27,7 @@ services:
       - mysql_data:/var/lib/mysql
 
   backend:
-    build: .
+    image: baucuenca/asi-tp5-backend:latest # Imagen del backend obtenida desde Docker Hub
     container_name: asi-tp5-backend
     depends_on:
       mysql:
