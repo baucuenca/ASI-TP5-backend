@@ -13,9 +13,6 @@ import os
 
 app = FastAPI()
 
-load_dotenv()
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
