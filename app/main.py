@@ -16,14 +16,10 @@ app = FastAPI()
 load_dotenv()
 FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN")
 
-origins = [
-    FRONTEND_ORIGIN,
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
